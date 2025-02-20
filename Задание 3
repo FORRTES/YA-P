@@ -1,0 +1,74 @@
+// Функция сложения комплексных чисел
+let add (aR, aI) (bR, bI) = (aR + bR, aI + bI)
+
+// Функция вычитания комплексных чисел
+let subtract (aR, aI) (bR, bI) = (aR - bR, aI - bI)
+
+// Функция умножения комплексных чисел
+let multiply (aR, aI) (bR, bI) = 
+    (aR * bR - aI * bI, aR * bI + aI * bR)
+
+// Функция деления комплексных чисел
+let divide (aR, aI) (bR, bI) =
+    let denominator = bR * bR + bI * bI
+    if denominator = 0.0 then failwith "Деление на ноль!"
+    else 
+        ((aR * bR + aI * bI) / denominator, 
+         (aI * bR - aR * bI) / denominator)
+
+// Функция возведения в степень (натуральную)
+let rec power (aR, aI) n =
+    if n = 0 then (1.0, 0.0)
+    elif n = 1 then (aR, aI)
+    else multiply (aR, aI) (power (aR, aI) (n - 1))
+
+// Функция для чтения комплексного числа с клавиатуры
+let readComplex () =
+    printf "Введите действительную часть: "
+    let r = System.Console.ReadLine() |> float
+    printf "Введите мнимую часть: "
+    let i = System.Console.ReadLine() |> float
+    (r, i)
+
+// Функция для вывода комплексного числа
+let printComplex (r, i) =
+    if i >= 0.0 then printfn "%.2f + %.2fi" r i
+    else printfn "%.2f - %.2fi" r (abs i)
+
+// Основная функция, предлагающая выбрать операцию
+let rec main () =
+    printfn "\nВыберите операцию: +, -, *, /, ^ (или введите 'exit' для выхода)"
+    let op = System.Console.ReadLine()
+
+    if op = "exit" then
+        printfn "Выход из программы."
+    else
+        printfn "\nВведите первое комплексное число:"
+        let num1 = readComplex()
+
+        printfn "\nВведите второе комплексное число (или степень для ^):"
+        let num2 = 
+            if op = "^" then 
+                System.Console.ReadLine() |> int |> fun n -> (float n, 0.0)
+            else 
+                readComplex()
+
+        let result =
+            match op with
+            | "+" -> add num1 num2
+            | "-" -> subtract num1 num2
+            | "*" -> multiply num1 num2
+            | "/" -> divide num1 num2
+            | "^" -> power num1 (fst num2 |> int)
+            | _   -> failwith "Неверная операция"
+
+        printf "Результат: "
+        printComplex result
+
+        printfn "\nХотите выполнить ещё одно вычисление? (y/n)"
+        let choice = System.Console.ReadLine()
+        if choice = "y" || choice = "Y" then main ()
+        else printfn "Выход из программы."
+
+// Запуск программы
+main ()
