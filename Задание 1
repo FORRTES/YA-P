@@ -1,0 +1,34 @@
+open System
+
+/// Функция для получения последней цифры из числа
+let lastDigit (input: string) =
+    match System.Double.TryParse(input) with
+    | (true, value) ->
+        let absValue = abs value
+        let lastChar = absValue.ToString().TrimEnd('0').TrimEnd('.') |> Seq.last
+        int lastChar - int '0'
+    | _ -> 
+        printfn "Ошибка: Введите корректное число!"
+        -1
+
+/// Функция для ввода данных и формирования списка последних цифр
+let rec inputNumbers acc =
+    printf "Введите число (или 'q' для выхода): "
+    let input = Console.ReadLine()
+    if input.ToLower() = "q" then
+        List.rev acc
+    else
+        let digit = lastDigit input
+        if digit >= 0 then
+            inputNumbers (digit :: acc)
+        else
+            inputNumbers acc
+
+/// Запуск программы
+let main () =
+    printfn "Программа сбора последних цифр чисел."
+    let result = inputNumbers []
+    printfn "Список последних цифр: %A" result
+
+// Вызов главной функции
+main ()
