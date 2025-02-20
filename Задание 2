@@ -1,0 +1,38 @@
+open System
+
+// Функция для нахождения минимальной цифры в числе (рекурсивно)
+let rec minDigit n =
+    if n < 10 then n
+    else min (n % 10) (minDigit (n / 10))
+
+// Функция для получения натурального числа от пользователя (рекурсивно)
+let rec getNaturalNumber () =
+    printf "Введите натуральное число: "
+    let input = Console.ReadLine()
+    match input with
+    | null -> getNaturalNumber ()
+    | _ ->
+        match Int32.TryParse(input) with
+        | (true, n) when n > 0 -> n
+        | _ ->
+            printfn "Ошибка: Введите натуральное число!"
+            getNaturalNumber ()
+
+// Функция для обработки одного числа и повторного вызова при необходимости (рекурсивно)
+let rec processNumber () =
+    let number = getNaturalNumber ()
+    let minDigitResult = minDigit number
+    printfn "Минимальная цифра в числе: %d" minDigitResult
+    printf "Хотите проверить другое число? (да/нет): "
+    
+    let response = Console.ReadLine()
+    match response with
+    | null -> processNumber ()
+    | input when input.Trim().ToLower() = "да" || input.Trim().ToLower() = "yes" -> processNumber ()
+    | input when input.Trim().ToLower() = "нет" || input.Trim().ToLower() = "no" -> printfn "Выход из программы. Спасибо!"
+    | _ -> 
+        printfn "Некорректный ввод, попробуйте снова."
+        processNumber ()
+
+// Запуск программы
+processNumber ()
